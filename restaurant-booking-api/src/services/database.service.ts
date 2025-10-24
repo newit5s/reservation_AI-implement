@@ -10,9 +10,9 @@ class DatabaseService {
       DatabaseService.instance = new PrismaClient({
         datasources: {
           db: {
-            url: env.DATABASE_URL
-          }
-        }
+            url: env.DATABASE_URL,
+          },
+        },
       });
       DatabaseService.instance.$connect().catch((error) => {
         logger.error('Failed to connect to database', { error });

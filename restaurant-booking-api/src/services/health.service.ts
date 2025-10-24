@@ -15,14 +15,14 @@ export const getHealthStatus = async (): Promise<HealthStatus> => {
       status: 'ok',
       timestamp: new Date().toISOString(),
       environment: env.NODE_ENV,
-      database: 'connected'
+      database: 'connected',
     };
   } catch (error) {
     return {
       status: 'ok',
       timestamp: new Date().toISOString(),
       environment: env.NODE_ENV,
-      database: 'disconnected'
+      database: 'disconnected',
     };
   }
 };

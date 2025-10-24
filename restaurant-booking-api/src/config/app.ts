@@ -22,7 +22,7 @@ export const createApp = () => {
   app.use(
     cors({
       origin: env.FRONTEND_URL,
-      credentials: true
+      credentials: true,
     })
   );
   app.use(morgan(env.NODE_ENV === 'production' ? 'combined' : 'dev'));
@@ -31,7 +31,7 @@ export const createApp = () => {
       windowMs: RATE_LIMIT_WINDOW_MS,
       max: RATE_LIMIT_MAX_REQUESTS,
       standardHeaders: true,
-      legacyHeaders: false
+      legacyHeaders: false,
     })
   );
 

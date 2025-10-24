@@ -108,6 +108,7 @@ model User {
   bookingsCancelled Booking[] @relation("BookingCancelledBy")
   bookingHistory BookingHistory[]
   settings     Setting[] @relation("SettingUpdatedBy")
+  loginAudits LoginAudit[]
 
   @@map("users")
 }
@@ -270,6 +271,22 @@ model Setting {
 
   @@unique([scope, branchId, category, key])
   @@map("settings")
+}
+
+model LoginAudit {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String?  @db.Uuid @map("user_id")
+  user      User?    @relation(fields: [userId], references: [id])
+  email     String   @db.Citext
+  success   Boolean
+  message   String?  @db.VarChar(255)
+  ipAddress String?  @map("ip_address") @db.VarChar(45)
+  userAgent String?  @map("user_agent")
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([userId])
+  @@index([email])
+  @@map("login_audits")
 }
 
 model CustomerPreference {

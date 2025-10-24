@@ -9,13 +9,13 @@ export class BookingRepository extends BaseRepository<Prisma.BookingCreateInput>
 
   async findAvailableSlots(branchId: string, date: Date, time: Date, partySize: number) {
     const tables = await this.prisma.table.findMany({
-      where: { branchId, capacity: { gte: partySize }, isActive: true }
+      where: { branchId, capacity: { gte: partySize }, isActive: true },
     });
 
     const availability = await Promise.all(
       tables.map(async (table) => ({
         tableId: table.id,
-        available: await BookingModel.checkAvailability(branchId, table.id, date, time, 120)
+        available: await BookingModel.checkAvailability(branchId, table.id, date, time, 120),
       }))
     );
 

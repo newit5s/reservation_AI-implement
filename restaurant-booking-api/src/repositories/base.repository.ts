@@ -3,11 +3,20 @@ import { DatabaseService } from '../services/database.service';
 import { PaginationOptions } from '../types';
 import { buildPaginatedResult, getPagination } from '../utils/helpers';
 
+type Delegate<TModel> = {
+  findUnique(args: Record<string, unknown>): Promise<TModel | null>;
+  findMany(args: Record<string, unknown>): Promise<TModel[]>;
+  create(args: { data: TModel }): Promise<TModel>;
+  update(args: { where: Record<string, unknown>; data: Partial<TModel> }): Promise<TModel>;
+  delete(args: { where: Record<string, unknown> }): Promise<TModel>;
+  count(args: { where?: Record<string, unknown> }): Promise<number>;
+};
+
 export class BaseRepository<TModel> {
   protected prisma: PrismaClient;
-  protected delegate: any;
+  protected delegate: Delegate<TModel>;
 
-  constructor(modelAccessor: (client: PrismaClient) => any) {
+  constructor(modelAccessor: (client: PrismaClient) => Delegate<TModel>) {
     this.prisma = DatabaseService.getClient();
     this.delegate = modelAccessor(this.prisma);
   }
@@ -36,7 +45,7 @@ export class BaseRepository<TModel> {
     const { skip, take } = getPagination(options);
     const [data, total] = await Promise.all([
       this.delegate.findMany({ ...args, skip, take }),
-      this.delegate.count({ where: args.where ?? {} })
+      this.delegate.count({ where: args.where ?? {} }),
     ]);
 
     return buildPaginatedResult(data, total, options);
