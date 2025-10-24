@@ -1,0 +1,35 @@
+{
+  "common": {
+    "title": "Hệ Thống Đặt Bàn Nhà Hàng",
+    "welcome": "Xin chào",
+    "logout": "Đăng xuất",
+    "login": "Đăng nhập",
+    "language": "Ngôn ngữ"
+  },
+  "navigation": {
+    "home": "Trang chủ",
+    "booking": "Đặt bàn",
+    "admin": "Quản trị",
+    "login": "Đăng nhập"
+  },
+  "home": {
+    "heroTitle": "Đặt bàn dễ dàng cho nhà hàng hiện đại",
+    "heroSubtitle": "Quản lý bàn, khách hàng và đặt chỗ trong một bảng điều khiển duy nhất."
+  },
+  "booking": {
+    "title": "Đặt bàn",
+    "subtitle": "Chọn ngày và thời gian phù hợp",
+    "selectDate": "Chọn ngày",
+    "selectTime": "Chọn thời gian",
+    "partySize": "Số lượng khách",
+    "specialRequests": "Yêu cầu đặc biệt"
+  },
+  "admin": {
+    "title": "Tổng quan chi nhánh",
+    "subtitle": "Theo dõi đặt chỗ, bàn và hoạt động khách hàng."
+  },
+  "auth": {
+    "title": "Chào mừng trở lại",
+    "subtitle": "Truy cập trung tâm điều khiển nhà hàng"
+  }
+}

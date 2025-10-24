@@ -1,0 +1,35 @@
+{
+  "common": {
+    "title": "レストラン予約システム",
+    "welcome": "ようこそ",
+    "logout": "ログアウト",
+    "login": "ログイン",
+    "language": "言語"
+  },
+  "navigation": {
+    "home": "ホーム",
+    "booking": "予約",
+    "admin": "管理",
+    "login": "ログイン"
+  },
+  "home": {
+    "heroTitle": "現代のレストランに最適な予約管理",
+    "heroSubtitle": "テーブル、顧客、予約を一つのダッシュボードで管理しましょう。"
+  },
+  "booking": {
+    "title": "テーブルを予約",
+    "subtitle": "ご希望の日付と時間を選択",
+    "selectDate": "日付を選択",
+    "selectTime": "時間を選択",
+    "partySize": "人数",
+    "specialRequests": "特別なリクエスト"
+  },
+  "admin": {
+    "title": "支店概要",
+    "subtitle": "予約、テーブル、顧客の状況を確認しましょう。"
+  },
+  "auth": {
+    "title": "おかえりなさい",
+    "subtitle": "レストラン管理センターにアクセスする"
+  }
+}
