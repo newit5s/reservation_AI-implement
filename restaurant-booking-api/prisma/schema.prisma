@@ -1,0 +1,285 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  MASTER_ADMIN
+  BRANCH_ADMIN
+  STAFF
+}
+
+enum CustomerTier {
+  REGULAR
+  VIP
+}
+
+enum TableType {
+  REGULAR
+  VIP
+  PRIVATE
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  CHECKED_IN
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum BookingSource {
+  WEBSITE
+  PHONE
+  WALK_IN
+  ADMIN
+}
+
+enum NotificationRecipient {
+  CUSTOMER
+  USER
+}
+
+enum NotificationType {
+  EMAIL
+  SMS
+  PUSH
+  IN_APP
+}
+
+enum NotificationStatus {
+  PENDING
+  SENT
+  FAILED
+  READ
+}
+
+enum SettingScope {
+  GLOBAL
+  BRANCH
+}
+
+enum SettingValueType {
+  STRING
+  NUMBER
+  BOOLEAN
+  JSON
+}
+
+model Branch {
+  id          String      @id @default(uuid()) @db.Uuid
+  name        String      @db.VarChar(255)
+  address     String?
+  phone       String?     @db.VarChar(20)
+  email       String?     @db.Citext
+  settings    Json        @default("{}")
+  isActive    Boolean     @default(true) @map("is_active")
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @default(now()) @map("updated_at")
+  users       User[]
+  tables      Table[]
+  bookings    Booking[]
+  operatingHours OperatingHour[]
+  blockedSlots BlockedSlot[]
+  settingsEntries Setting[]
+
+  @@map("branches")
+}
+
+model User {
+  id          String      @id @default(uuid()) @db.Uuid
+  email       String      @unique @db.Citext
+  passwordHash String     @map("password_hash") @db.VarChar(255)
+  role        UserRole    @default(STAFF)
+  branchId    String?     @db.Uuid @map("branch_id")
+  branch      Branch?     @relation(fields: [branchId], references: [id])
+  fullName    String?     @map("full_name") @db.VarChar(255)
+  phone       String?     @db.VarChar(20)
+  isActive    Boolean     @default(true) @map("is_active")
+  lastLogin   DateTime?   @map("last_login")
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @default(now()) @map("updated_at")
+  bookingsCreated Booking[] @relation("BookingCreatedBy")
+  bookingsCancelled Booking[] @relation("BookingCancelledBy")
+  bookingHistory BookingHistory[]
+  settings     Setting[] @relation("SettingUpdatedBy")
+
+  @@map("users")
+}
+
+model Customer {
+  id          String      @id @default(uuid()) @db.Uuid
+  fullName    String      @map("full_name") @db.VarChar(255)
+  email       String?     @unique @db.Citext
+  phone       String?     @unique @db.VarChar(20)
+  tier        CustomerTier @default(REGULAR)
+  totalBookings Int       @default(0) @map("total_bookings")
+  successfulBookings Int  @default(0) @map("successful_bookings")
+  noShows     Int         @default(0) @map("no_shows")
+  cancellations Int       @default(0)
+  isBlacklisted Boolean   @default(false) @map("is_blacklisted")
+  blacklistReason String? @map("blacklist_reason")
+  notes       String?
+  preferences Json        @default("{}")
+  referralCode String?    @unique @map("referral_code") @db.VarChar(20)
+  referredById String?    @db.Uuid @map("referred_by")
+  referredBy  Customer?   @relation("CustomerReferrals", fields: [referredById], references: [id])
+  referrals   Customer[]  @relation("CustomerReferrals")
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @default(now()) @map("updated_at")
+  bookings    Booking[]
+  preferencesEntries CustomerPreference[]
+
+  @@map("customers")
+}
+
+model Table {
+  id          String    @id @default(uuid()) @db.Uuid
+  branchId    String    @db.Uuid @map("branch_id")
+  branch      Branch    @relation(fields: [branchId], references: [id])
+  tableNumber String    @map("table_number") @db.VarChar(20)
+  capacity    Int
+  minCapacity Int       @default(1) @map("min_capacity")
+  tableType   TableType @default(REGULAR) @map("table_type")
+  positionX   Int?      @map("position_x")
+  positionY   Int?      @map("position_y")
+  floor       Int       @default(1)
+  isCombinable Boolean  @default(true) @map("is_combinable")
+  isActive    Boolean   @default(true) @map("is_active")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @default(now()) @map("updated_at")
+  bookings    Booking[]
+
+  @@unique([branchId, tableNumber])
+  @@map("tables")
+}
+
+model Booking {
+  id          String      @id @default(uuid()) @db.Uuid
+  bookingCode String      @unique @map("booking_code") @db.VarChar(6)
+  customerId  String?     @db.Uuid @map("customer_id")
+  customer    Customer?   @relation(fields: [customerId], references: [id])
+  branchId    String      @db.Uuid @map("branch_id")
+  branch      Branch      @relation(fields: [branchId], references: [id])
+  tableId     String?     @db.Uuid @map("table_id")
+  table       Table?      @relation(fields: [tableId], references: [id])
+  bookingDate DateTime    @map("booking_date") @db.Date
+  timeSlot    DateTime    @map("time_slot") @db.Time
+  durationMinutes Int     @default(120) @map("duration_minutes")
+  partySize   Int         @map("party_size")
+  status      BookingStatus @default(PENDING)
+  specialRequests String? @map("special_requests")
+  internalNotes String?   @map("internal_notes")
+  source      BookingSource @default(WEBSITE)
+  confirmedAt DateTime?   @map("confirmed_at")
+  checkedInAt DateTime?   @map("checked_in_at")
+  cancelledAt DateTime?   @map("cancelled_at")
+  cancelledById String?   @db.Uuid @map("cancelled_by")
+  cancelledBy  User?      @relation("BookingCancelledBy", fields: [cancelledById], references: [id])
+  cancellationReason String? @map("cancellation_reason")
+  createdById String?     @db.Uuid @map("created_by")
+  createdBy   User?       @relation("BookingCreatedBy", fields: [createdById], references: [id])
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @default(now()) @map("updated_at")
+  history     BookingHistory[]
+
+  @@map("bookings")
+}
+
+model BookingHistory {
+  id          String      @id @default(uuid()) @db.Uuid
+  bookingId   String      @db.Uuid @map("booking_id")
+  booking     Booking     @relation(fields: [bookingId], references: [id])
+  action      String      @db.VarChar(50)
+  oldStatus   BookingStatus? @map("old_status")
+  newStatus   BookingStatus? @map("new_status")
+  changedById String?     @db.Uuid @map("changed_by")
+  changedBy   User?       @relation(fields: [changedById], references: [id])
+  notes       String?
+  createdAt   DateTime    @default(now()) @map("created_at")
+
+  @@map("booking_history")
+}
+
+model OperatingHour {
+  id          String    @id @default(uuid()) @db.Uuid
+  branchId    String    @db.Uuid @map("branch_id")
+  branch      Branch    @relation(fields: [branchId], references: [id])
+  dayOfWeek   Int       @map("day_of_week")
+  openTime    DateTime? @map("open_time") @db.Time
+  closeTime   DateTime? @map("close_time") @db.Time
+  breakStart  DateTime? @map("break_start") @db.Time
+  breakEnd    DateTime? @map("break_end") @db.Time
+  isClosed    Boolean   @default(false) @map("is_closed")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  updatedAt   DateTime  @default(now()) @map("updated_at")
+
+  @@unique([branchId, dayOfWeek])
+  @@map("operating_hours")
+}
+
+model BlockedSlot {
+  id          String    @id @default(uuid()) @db.Uuid
+  branchId    String    @db.Uuid @map("branch_id")
+  branch      Branch    @relation(fields: [branchId], references: [id])
+  date        DateTime  @db.Date
+  startTime   DateTime  @map("start_time") @db.Time
+  endTime     DateTime  @map("end_time") @db.Time
+  reason      String?
+  createdById String?   @db.Uuid @map("created_by")
+  createdBy   User?     @relation(fields: [createdById], references: [id])
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@map("blocked_slots")
+}
+
+model Notification {
+  id          String    @id @default(uuid()) @db.Uuid
+  recipientType NotificationRecipient @map("recipient_type")
+  recipientId String?   @db.Uuid @map("recipient_id")
+  type        NotificationType
+  subject     String?   @db.VarChar(255)
+  content     String
+  status      NotificationStatus @default(PENDING)
+  sentAt      DateTime? @map("sent_at")
+  readAt      DateTime? @map("read_at")
+  errorMessage String?  @map("error_message")
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@map("notifications")
+}
+
+model Setting {
+  id          String    @id @default(uuid()) @db.Uuid
+  scope       SettingScope
+  branchId    String?   @db.Uuid @map("branch_id")
+  branch      Branch?   @relation(fields: [branchId], references: [id])
+  category    String    @db.VarChar(50)
+  key         String    @db.VarChar(100)
+  value       String
+  valueType   SettingValueType @map("value_type")
+  description String?
+  updatedById String?   @db.Uuid @map("updated_by")
+  updatedBy   User?     @relation("SettingUpdatedBy", fields: [updatedById], references: [id])
+  updatedAt   DateTime  @default(now()) @map("updated_at")
+
+  @@unique([scope, branchId, category, key])
+  @@map("settings")
+}
+
+model CustomerPreference {
+  id          String    @id @default(uuid()) @db.Uuid
+  customerId  String    @db.Uuid @map("customer_id")
+  customer    Customer  @relation(fields: [customerId], references: [id])
+  key         String    @db.VarChar(50)
+  value       String
+  createdAt   DateTime  @default(now()) @map("created_at")
+
+  @@unique([customerId, key])
+  @@map("customer_preferences")
+}

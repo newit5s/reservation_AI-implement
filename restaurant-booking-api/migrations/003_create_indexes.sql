@@ -1,0 +1,12 @@
+CREATE INDEX idx_users_branch ON users(branch_id);
+CREATE INDEX idx_customers_email ON customers(email);
+CREATE INDEX idx_customers_phone ON customers(phone);
+CREATE INDEX idx_tables_branch ON tables(branch_id);
+CREATE INDEX idx_bookings_branch_date ON bookings(branch_id, booking_date);
+CREATE INDEX idx_bookings_customer ON bookings(customer_id);
+CREATE INDEX idx_bookings_table_slot ON bookings(table_id, booking_date, time_slot);
+CREATE INDEX idx_booking_history_booking ON booking_history(booking_id);
+CREATE INDEX idx_operating_hours_branch ON operating_hours(branch_id);
+CREATE INDEX idx_blocked_slots_branch_date ON blocked_slots(branch_id, date);
+CREATE INDEX idx_notifications_status ON notifications(status);
+CREATE INDEX idx_settings_branch_category ON settings(branch_id, category);

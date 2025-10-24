@@ -1,0 +1,35 @@
+{
+  "common": {
+    "title": "Restaurant Booking System",
+    "welcome": "Welcome",
+    "logout": "Logout",
+    "login": "Login",
+    "language": "Language"
+  },
+  "navigation": {
+    "home": "Home",
+    "booking": "Booking",
+    "admin": "Admin",
+    "login": "Login"
+  },
+  "home": {
+    "heroTitle": "Effortless reservations for modern restaurants",
+    "heroSubtitle": "Manage tables, customers, and bookings in one beautiful dashboard."
+  },
+  "booking": {
+    "title": "Book a Table",
+    "subtitle": "Choose your preferred date and time",
+    "selectDate": "Select Date",
+    "selectTime": "Select Time",
+    "partySize": "Party Size",
+    "specialRequests": "Special Requests"
+  },
+  "admin": {
+    "title": "Branch Overview",
+    "subtitle": "Monitor bookings, tables, and customer activity."
+  },
+  "auth": {
+    "title": "Welcome back",
+    "subtitle": "Access the restaurant control centre"
+  }
+}
