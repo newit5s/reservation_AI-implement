@@ -2,7 +2,7 @@ import swaggerJsdoc from 'swagger-jsdoc';
 import { APP_NAME } from '../utils/constants';
 import { env } from './env';
 
-const options: swaggerJsdoc.Options = {
+const options = {
   definition: {
     openapi: '3.1.0',
     info: {

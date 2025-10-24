@@ -17,7 +17,7 @@ export const getDatabaseClient = (): PrismaClient => {
     prisma
       .$connect()
       .then(() => logger.info('Database connection established'))
-      .catch((error) => {
+      .catch((error: unknown) => {
         logger.error('Database connection failed', { error });
       });
   }

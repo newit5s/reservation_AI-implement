@@ -9,6 +9,7 @@
     "start": "node dist/server.js",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
     "test": "jest --config jest.config.ts",
+    "db:validate": "psql \"$DATABASE_URL\" -f tests/database.test.sql",
     "prisma:generate": "prisma generate",
     "prisma:migrate": "prisma migrate dev"
   },
