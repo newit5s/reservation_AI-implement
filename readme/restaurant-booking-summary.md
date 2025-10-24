@@ -41,6 +41,11 @@ A **multi-branch restaurant booking system** with:
 - Implementation strategy
 - Success metrics
 
+### 5. **restaurant-booking-remediation-plan.md** (New)
+- Actionable backlog to resolve Phase 0–1 gaps
+- Developer-facing checklists with exit criteria
+- Links each fix to the relevant quick-start requirements
+
 ## 🚀 HOW TO START
 
 ### Step 1: Read the Overview
