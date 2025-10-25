@@ -8,15 +8,15 @@ const options = {
     info: {
       title: APP_NAME,
       version: '1.0.0',
-      description: 'API documentation for the restaurant booking system'
+      description: 'API documentation for the restaurant booking system',
     },
     servers: [
       {
-        url: `http://localhost:${env.PORT}`
-      }
-    ]
+        url: `http://localhost:${env.PORT}`,
+      },
+    ],
   },
-  apis: ['src/routes/*.ts', 'src/controllers/*.ts']
+  apis: ['src/routes/*.ts', 'src/controllers/*.ts'],
 };
 
 export const swaggerSpec = swaggerJsdoc(options);

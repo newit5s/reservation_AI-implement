@@ -13,7 +13,7 @@ export const logger = createLogger({
   format: combine(timestamp(), logFormat),
   transports: [
     new transports.Console({
-      format: combine(colorize(), timestamp(), logFormat)
-    })
-  ]
+      format: combine(colorize(), timestamp(), logFormat),
+    }),
+  ],
 });

@@ -10,7 +10,9 @@ const envSchema = z.object({
   DATABASE_URL: z.string().url(),
   JWT_SECRET: z.string(),
   JWT_EXPIRE: z.string().default('7d'),
-  FRONTEND_URL: z.string().url().default('http://localhost:5173')
+  REFRESH_TOKEN_EXPIRE: z.string().default('30d'),
+  REDIS_URL: z.string().url(),
+  FRONTEND_URL: z.string().url().default('http://localhost:5173'),
 });
 
 const parsed = envSchema.safeParse(process.env);

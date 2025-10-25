@@ -18,6 +18,9 @@ export interface JwtPayload {
   sub: string;
   email: string;
   role: string;
+  branchId?: string | null;
+  type?: 'access' | 'refresh';
+  tokenId?: string;
   iat?: number;
   exp?: number;
 }

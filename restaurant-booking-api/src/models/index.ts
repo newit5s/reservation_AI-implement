@@ -18,7 +18,7 @@ export class CustomerModel {
   static async calculateTier(customerId: string): Promise<'REGULAR' | 'VIP'> {
     const customer = await prisma().customer.findUnique({
       where: { id: customerId },
-      select: { successfulBookings: true }
+      select: { successfulBookings: true },
     });
     if (!customer) {
       return 'REGULAR';
@@ -29,7 +29,7 @@ export class CustomerModel {
   static async checkBlacklist(customerId: string): Promise<boolean> {
     const customer = await prisma().customer.findUnique({
       where: { id: customerId },
-      select: { isBlacklisted: true }
+      select: { isBlacklisted: true },
     });
     return customer?.isBlacklisted ?? false;
   }
@@ -38,7 +38,7 @@ export class CustomerModel {
     const bookings = await prisma().booking.groupBy({
       by: ['status'],
       where: { customerId },
-      _count: { _all: true }
+      _count: { _all: true },
     });
 
     return bookings.reduce<Record<string, number>>((acc, item) => {
@@ -60,8 +60,8 @@ export class CustomerModel {
         cancellations: cancelled,
         noShows: noShow,
         totalBookings: Object.values(stats).reduce((acc, count) => acc + count, 0),
-        tier: successful >= 10 ? 'VIP' : 'REGULAR'
-      }
+        tier: successful >= 10 ? 'VIP' : 'REGULAR',
+      },
     });
   }
 }
@@ -100,9 +100,9 @@ export class BookingModel {
         branchId,
         bookingDate,
         status: { in: ['PENDING', 'CONFIRMED', 'CHECKED_IN'] },
-        ...(tableId ? { tableId } : {})
+        ...(tableId ? { tableId } : {}),
       },
-      select: { bookingDate: true, timeSlot: true, durationMinutes: true }
+      select: { bookingDate: true, timeSlot: true, durationMinutes: true },
     });
 
     const hasOverlap = bookings.some((booking) => {
@@ -116,7 +116,7 @@ export class BookingModel {
     }
 
     const blockedSlots = await prisma().blockedSlot.findMany({
-      where: { branchId, date: bookingDate }
+      where: { branchId, date: bookingDate },
     });
 
     const blocked = blockedSlots.some((slot) => {
@@ -132,7 +132,7 @@ export class BookingModel {
     const now = new Date();
     const bookings = await prisma().booking.findMany({
       where: { status: 'CONFIRMED' },
-      select: { id: true, bookingDate: true, timeSlot: true }
+      select: { id: true, bookingDate: true, timeSlot: true },
     });
 
     const overdue = bookings.filter((booking) => {
@@ -146,7 +146,7 @@ export class BookingModel {
 
     const result = await prisma().booking.updateMany({
       where: { id: { in: overdue.map((booking) => booking.id) } },
-      data: { status: 'NO_SHOW' }
+      data: { status: 'NO_SHOW' },
     });
     return result.count;
   }
@@ -157,9 +157,9 @@ export class BookingModel {
       where: {
         branchId,
         bookingDate: { gte: today },
-        status: { in: ['PENDING', 'CONFIRMED'] }
+        status: { in: ['PENDING', 'CONFIRMED'] },
       },
-      orderBy: [{ bookingDate: 'asc' }, { timeSlot: 'asc' }]
+      orderBy: [{ bookingDate: 'asc' }, { timeSlot: 'asc' }],
     });
   }
 
@@ -169,10 +169,10 @@ export class BookingModel {
         branchId,
         bookingDate: {
           gte: start,
-          lte: end
-        }
+          lte: end,
+        },
       },
-      orderBy: [{ bookingDate: 'asc' }, { timeSlot: 'asc' }]
+      orderBy: [{ bookingDate: 'asc' }, { timeSlot: 'asc' }],
     });
   }
 }
@@ -181,7 +181,7 @@ export class TableModel {
   static async isAvailable(tableId: string, date: Date, time: Date): Promise<boolean> {
     const table = await prisma().table.findUnique({
       where: { id: tableId },
-      select: { branchId: true }
+      select: { branchId: true },
     });
     if (!table) {
       return false;
@@ -192,14 +192,14 @@ export class TableModel {
   static async getBookingsForDate(tableId: string, date: Date) {
     return prisma().booking.findMany({
       where: { tableId, bookingDate: date },
-      orderBy: { timeSlot: 'asc' }
+      orderBy: { timeSlot: 'asc' },
     });
   }
 
   static async canCombineWith(tableId: string, otherTableId: string): Promise<boolean> {
     const [table, other] = await prisma().table.findMany({
       where: { id: { in: [tableId, otherTableId] } },
-      select: { branchId: true, isCombinable: true }
+      select: { branchId: true, isCombinable: true },
     });
     if (!table || !other) {
       return false;
@@ -215,9 +215,9 @@ export class BranchModel {
       where: {
         branchId_dayOfWeek: {
           branchId,
-          dayOfWeek
-        }
-      }
+          dayOfWeek,
+        },
+      },
     });
     if (!hours || hours.isClosed) {
       return false;
@@ -237,9 +237,9 @@ export class BranchModel {
       where: {
         branchId_dayOfWeek: {
           branchId,
-          dayOfWeek
-        }
-      }
+          dayOfWeek,
+        },
+      },
     });
   }
 
@@ -248,15 +248,15 @@ export class BranchModel {
       where: {
         branchId,
         capacity: { gte: partySize },
-        isActive: true
+        isActive: true,
       },
-      orderBy: { capacity: 'asc' }
+      orderBy: { capacity: 'asc' },
     });
 
     const results = await Promise.all(
       tables.map(async (table) => ({
         table,
-        available: await BookingModel.checkAvailability(branchId, table.id, date, time, 120)
+        available: await BookingModel.checkAvailability(branchId, table.id, date, time, 120),
       }))
     );
 

@@ -2,12 +2,13 @@ import { NextFunction, Request, Response } from 'express';
 import { AnyZodObject } from 'zod';
 import { AppError } from '../utils/app-error';
 
-export const validateRequest = (schema: AnyZodObject) =>
+export const validateRequest =
+  (schema: AnyZodObject) =>
   (req: Request, _res: Response, next: NextFunction): void => {
     const result = schema.safeParse({
       body: req.body,
       query: req.query,
-      params: req.params
+      params: req.params,
     });
 
     if (!result.success) {
