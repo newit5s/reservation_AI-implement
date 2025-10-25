@@ -1,0 +1,25 @@
+# Phase 2-3 Testing Report
+
+## Initial Setup Failure
+- **Command:** `npm test`
+- **Result:** Environment validation aborted test execution because `REDIS_URL` was not defined. The configuration loader logged `Invalid environment configuration` and terminated via `process.exit(1)` from `src/config/env.ts`. (See Jest output excerpt `tests/setup.test.ts:37` and `src/config/env.ts:21-22`.)
+
+## Phase 2 – Authentication Suite
+- **Command:** `npm test -- --runTestsByPath tests/auth.phase.test.ts`
+- **Status:** ❌ Tests did not execute. Importing `AuthService` triggers TypeScript compilation failures:
+  - `src/services/auth.service.ts:3:10` – `error TS2305: Module '"@prisma/client"' has no exported member 'User'.`
+  - `src/services/auth.service.ts:30:26` – `error TS2769: No overload matches this call.` for `ms(env.JWT_EXPIRE)` because the `ms` typings reject the string duration.
+  - `src/services/auth.service.ts:46:26` – the same `ms` overload issue for `env.REFRESH_TOKEN_EXPIRE`.
+- **Impact:** Authentication flows cannot be verified until Prisma client types are generated (or imports corrected) and the duration parsing logic satisfies the `ms` typings.
+
+## Phase 3 – Core Table API Suite
+- **Command:** `npm test -- --runTestsByPath tests/core.phase.test.ts`
+- **Status:** ❌ Tests did not execute. Importing `TableService` surfaces TypeScript compilation errors:
+  - `src/services/table.service.ts:1:18` – `error TS2305: Module '"@prisma/client"' has no exported member 'Table'.`
+  - `src/services/table.service.ts:1:25` – `error TS2305: Module '"@prisma/client"' has no exported member 'TableType'.`
+  - Multiple occurrences (`lines 44, 58, 65`) where Prisma namespace types such as `TableUncheckedCreateInput` and `TableUpdateInput` are missing.
+  - `src/services/table.service.ts:140:48` – `error TS2339: Property 'getAvailableTables' does not exist on type 'typeof BookingModel'.` This indicates the implementation references a non-existent method, preventing availability checks.
+- **Impact:** Core table availability features are blocked until Prisma types are generated and the service references the correct availability helper (likely `BranchModel.getAvailableTables`).
+
+## Notes
+- Phase-specific Jest suites were added under `tests/` to exercise authentication and table availability scenarios. They intentionally surface the above compilation issues so the responsible teams can address them before functional verification continues.
