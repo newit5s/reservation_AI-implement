@@ -10,7 +10,9 @@
     "home": "Home",
     "booking": "Booking",
     "admin": "Admin",
-    "login": "Login"
+    "login": "Login",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "home": {
     "heroTitle": "Effortless reservations for modern restaurants",
@@ -22,11 +24,18 @@
     "selectDate": "Select Date",
     "selectTime": "Select Time",
     "partySize": "Party Size",
-    "specialRequests": "Special Requests"
+    "specialRequests": "Special Requests",
+    "submit": "Submit Booking",
+    "submitting": "Submitting..."
   },
   "admin": {
     "title": "Branch Overview",
-    "subtitle": "Monitor bookings, tables, and customer activity."
+    "subtitle": "Monitor bookings, tables, and customer activity.",
+    "upcomingTitle": "Upcoming Bookings",
+    "bookingCode": "Code: {{code}}",
+    "bookingSummary": "{{date}} · {{time}} · {{guests}} guests",
+    "bookingStatus": "Status: {{status}}",
+    "noUpcoming": "No upcoming bookings."
   },
   "auth": {
     "title": "Welcome back",

@@ -10,7 +10,9 @@
     "home": "Trang chủ",
     "booking": "Đặt bàn",
     "admin": "Quản trị",
-    "login": "Đăng nhập"
+    "login": "Đăng nhập",
+    "openMenu": "Mở menu",
+    "closeMenu": "Đóng menu"
   },
   "home": {
     "heroTitle": "Đặt bàn dễ dàng cho nhà hàng hiện đại",
@@ -22,11 +24,18 @@
     "selectDate": "Chọn ngày",
     "selectTime": "Chọn thời gian",
     "partySize": "Số lượng khách",
-    "specialRequests": "Yêu cầu đặc biệt"
+    "specialRequests": "Yêu cầu đặc biệt",
+    "submit": "Hoàn tất đặt bàn",
+    "submitting": "Đang gửi..."
   },
   "admin": {
     "title": "Tổng quan chi nhánh",
-    "subtitle": "Theo dõi đặt chỗ, bàn và hoạt động khách hàng."
+    "subtitle": "Theo dõi đặt chỗ, bàn và hoạt động khách hàng.",
+    "upcomingTitle": "Đặt bàn sắp tới",
+    "bookingCode": "Mã: {{code}}",
+    "bookingSummary": "{{date}} · {{time}} · {{guests}} khách",
+    "bookingStatus": "Trạng thái: {{status}}",
+    "noUpcoming": "Không có đặt bàn sắp tới."
   },
   "auth": {
     "title": "Chào mừng trở lại",

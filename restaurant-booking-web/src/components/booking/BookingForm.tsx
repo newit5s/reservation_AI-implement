@@ -49,10 +49,10 @@ const BookingForm = () => {
       </div>
       <button
         type="submit"
-        className="rounded bg-primary px-4 py-2 font-medium text-white shadow hover:bg-primary-light"
+        className="rounded bg-primary px-4 py-2 font-medium text-white shadow hover:bg-primary-light disabled:cursor-not-allowed disabled:opacity-70"
         disabled={createBooking.isLoading}
       >
-        {createBooking.isLoading ? '...' : t('booking.title')}
+        {createBooking.isLoading ? t('booking.submitting') : t('booking.submit')}
       </button>
     </form>
   );
