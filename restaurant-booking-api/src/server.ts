@@ -10,7 +10,7 @@ const server = http.createServer(app);
 initSocket(server);
 
 server.listen(env.PORT, () => {
-  logger.info(`🚀 Server running on port ${env.PORT}`);
+  logger.info(`Server running on port ${env.PORT}`);
 });
 
 const gracefulShutdown = async () => {
@@ -23,3 +23,4 @@ const gracefulShutdown = async () => {
 
 process.on('SIGINT', gracefulShutdown);
 process.on('SIGTERM', gracefulShutdown);
+

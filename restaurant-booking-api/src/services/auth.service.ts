@@ -20,6 +20,29 @@ import { EmailService } from './email.service';
 import { PASSWORD_RESET_PREFIX, PASSWORD_RESET_TOKEN_TTL } from '../utils/constants';
 import { RedisService } from './redis.service';
 
+// ensure ms receives a string (and fallback defaults)
+const jwtExpireValue = String(env.JWT_EXPIRE || '7d');
+const refreshExpireValue = String(env.REFRESH_TOKEN_EXPIRE || '30d');
+
+const jwtExpireMs = ms(jwtExpireValue as unknown as ms.StringValue);
+const refreshExpireMs = ms(refreshExpireValue as unknown as ms.StringValue);
+
+// when creating tokens, use values safely (example)
+function createAccessToken(payload: object) {
+  // ...existing logic...
+  // use jwtExpireValue when passing to sign (if sign expects string) or jwtExpireMs if used elsewhere
+}
+
+type Role = 'MASTER_ADMIN' | 'BRANCH_ADMIN' | 'STAFF';
+type UserEntity = {
+  id: string;
+  email: string;
+  role: Role;
+  branchId: string | null;
+  isActive: boolean;
+  passwordHash?: string | null;
+};
+
 export class AuthService {
   private userRepository: UserRepository;
 
@@ -42,7 +65,7 @@ export class AuthService {
     return { token, expiresIn };
   }
 
-  private async buildRefreshToken(user: User): Promise<{ token: string; expiresIn: number }> {
+  private async buildRefreshToken(user: UserEntity): Promise<{ token: string; expiresIn: number }> {
     const session = await SessionService.createSession(user.id);
     const expiresIn = Number(ms(env.REFRESH_TOKEN_EXPIRE as Parameters<typeof ms>[0]));
     const token = signToken(

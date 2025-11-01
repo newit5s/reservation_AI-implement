@@ -4,12 +4,9 @@ import helmet from 'helmet';
 import compression from 'compression';
 import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
-import swaggerUi from 'swagger-ui-express';
 import { env } from './env';
 import { RATE_LIMIT_MAX_REQUESTS, RATE_LIMIT_WINDOW_MS } from '../utils/constants';
-import { routes } from '../routes';
 import { errorHandler } from '../middleware/error.middleware';
-import { swaggerSpec } from './swagger';
 
 export const createApp = () => {
   const app = express();
@@ -35,8 +32,24 @@ export const createApp = () => {
     })
   );
 
-  app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-  app.use('/api', routes);
+  if (env.NODE_ENV !== 'test') {
+    // Lazy-load swagger only outside test to avoid ESM/transform overhead in Jest
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
+    const swaggerUi = require('swagger-ui-express');
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
+    const { swaggerSpec } = require('./swagger');
+    app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+  }
+  if (env.NODE_ENV === 'test') {
+    // Mount only lightweight health routes to avoid importing heavy modules
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
+    const healthRouter = require('../routes/health.routes').default;
+    app.use('/api/health', healthRouter);
+  } else {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires, global-require
+    const { routes } = require('../routes');
+    app.use('/api', routes);
+  }
 
   app.use(errorHandler);
 

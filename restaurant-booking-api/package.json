@@ -8,10 +8,11 @@
     "build": "tsc --project tsconfig.json",
     "start": "node dist/server.js",
     "lint": "eslint \"src/**/*.{ts,tsx}\"",
-    "test": "jest --config jest.config.ts",
+    "test": "jest --runInBand",
     "db:validate": "psql \"$DATABASE_URL\" -f tests/database.test.sql",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev"
+    "prisma:generate": "npx prisma generate",
+    "pretest": "npm run prisma:generate",
+    "test": "jest --runInBand"
   },
   "keywords": [
     "express",
