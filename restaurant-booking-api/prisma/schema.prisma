@@ -71,6 +71,49 @@ enum SettingValueType {
   JSON
 }
 
+enum WaitlistStatus {
+  PENDING
+  NOTIFIED
+  CONFIRMED
+  CANCELLED
+  EXPIRED
+}
+
+enum TimelineEventType {
+  BOOKING_CREATED
+  BOOKING_UPDATED
+  BOOKING_CONFIRMED
+  BOOKING_CANCELLED
+  CHECKED_IN
+  COMPLETED
+  NOTE_ADDED
+  BLACKLISTED
+  BLACKLIST_REMOVED
+  LOYALTY_UPDATED
+  MERGED
+  WAITLIST_JOINED
+  WAITLIST_PROMOTED
+}
+
+enum LoyaltyTier {
+  REGULAR
+  GOLD
+  VIP
+}
+
+enum LoyaltyTransactionType {
+  EARN
+  REDEEM
+  ADJUST
+  BONUS
+}
+
+enum RewardRedemptionStatus {
+  PENDING
+  APPROVED
+  CANCELLED
+}
+
 model Branch {
   id          String      @id @default(uuid()) @db.Uuid
   name        String      @db.VarChar(255)
@@ -87,6 +130,7 @@ model Branch {
   operatingHours OperatingHour[]
   blockedSlots BlockedSlot[]
   settingsEntries Setting[]
+  waitlistEntries WaitlistEntry[]
 
   @@map("branches")
 }
@@ -109,6 +153,9 @@ model User {
   bookingHistory BookingHistory[]
   settings     Setting[] @relation("SettingUpdatedBy")
   loginAudits LoginAudit[]
+  customerNotes CustomerNote[] @relation("CustomerNoteCreatedBy")
+  customerTimelineEntries CustomerTimeline[] @relation("CustomerTimelineCreatedBy")
+  blockedSlotsCreated BlockedSlot[] @relation("BlockedSlotCreatedBy")
 
   @@map("users")
 }
@@ -135,6 +182,11 @@ model Customer {
   updatedAt   DateTime    @default(now()) @map("updated_at")
   bookings    Booking[]
   preferencesEntries CustomerPreference[]
+  waitlistEntries WaitlistEntry[]
+  notesEntries CustomerNote[]
+  timelineEntries CustomerTimeline[]
+  loyaltyAccount LoyaltyAccount?
+  rewardRedemptions RewardRedemption[]
 
   @@map("customers")
 }
@@ -188,6 +240,7 @@ model Booking {
   createdAt   DateTime    @default(now()) @map("created_at")
   updatedAt   DateTime    @default(now()) @map("updated_at")
   history     BookingHistory[]
+  waitlistEntries WaitlistEntry[]
 
   @@map("bookings")
 }
@@ -233,7 +286,7 @@ model BlockedSlot {
   endTime     DateTime  @map("end_time") @db.Time
   reason      String?
   createdById String?   @db.Uuid @map("created_by")
-  createdBy   User?     @relation(fields: [createdById], references: [id])
+  createdBy   User?     @relation("BlockedSlotCreatedBy", fields: [createdById], references: [id])
   createdAt   DateTime  @default(now()) @map("created_at")
 
   @@map("blocked_slots")
@@ -299,4 +352,116 @@ model CustomerPreference {
 
   @@unique([customerId, key])
   @@map("customer_preferences")
+}
+
+model WaitlistEntry {
+  id          String        @id @default(uuid()) @db.Uuid
+  branchId    String        @db.Uuid @map("branch_id")
+  branch      Branch        @relation(fields: [branchId], references: [id])
+  customerId  String?       @db.Uuid @map("customer_id")
+  customer    Customer?     @relation(fields: [customerId], references: [id])
+  bookingId   String?       @db.Uuid @map("booking_id")
+  booking     Booking?      @relation(fields: [bookingId], references: [id])
+  bookingDate DateTime      @map("booking_date") @db.Date
+  timeSlot    DateTime      @map("time_slot") @db.Time
+  partySize   Int           @map("party_size")
+  status      WaitlistStatus @default(PENDING)
+  notes       String?
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @default(now()) @map("updated_at")
+
+  @@index([branchId, bookingDate])
+  @@map("waitlist_entries")
+}
+
+model CustomerNote {
+  id          String   @id @default(uuid()) @db.Uuid
+  customerId  String   @db.Uuid @map("customer_id")
+  customer    Customer @relation(fields: [customerId], references: [id])
+  createdById String?  @db.Uuid @map("created_by")
+  createdBy   User?    @relation("CustomerNoteCreatedBy", fields: [createdById], references: [id])
+  content     String
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  @@map("customer_notes")
+}
+
+model CustomerTimeline {
+  id          String           @id @default(uuid()) @db.Uuid
+  customerId  String           @db.Uuid @map("customer_id")
+  customer    Customer         @relation(fields: [customerId], references: [id])
+  createdById String?          @db.Uuid @map("created_by")
+  createdBy   User?            @relation("CustomerTimelineCreatedBy", fields: [createdById], references: [id])
+  eventType   TimelineEventType @map("event_type")
+  description String
+  metadata    Json             @default("{}")
+  createdAt   DateTime         @default(now()) @map("created_at")
+
+  @@index([customerId, createdAt])
+  @@map("customer_timeline")
+}
+
+model LoyaltyAccount {
+  id             String      @id @default(uuid()) @db.Uuid
+  customerId     String      @unique @db.Uuid @map("customer_id")
+  customer       Customer    @relation(fields: [customerId], references: [id])
+  tier           LoyaltyTier @default(REGULAR)
+  points         Int         @default(0)
+  badges         Json        @default("[]")
+  totalReferrals Int         @default(0) @map("total_referrals")
+  specialOccasions Json      @default("[]") @map("special_occasions")
+  createdAt      DateTime    @default(now()) @map("created_at")
+  updatedAt      DateTime    @default(now()) @map("updated_at")
+  transactions   LoyaltyTransaction[]
+  redemptions    RewardRedemption[]
+
+  @@map("loyalty_accounts")
+}
+
+model LoyaltyTransaction {
+  id          String                @id @default(uuid()) @db.Uuid
+  accountId   String                @db.Uuid @map("account_id")
+  account     LoyaltyAccount        @relation(fields: [accountId], references: [id])
+  type        LoyaltyTransactionType
+  points      Int
+  description String?
+  metadata    Json                 @default("{}")
+  createdAt   DateTime             @default(now()) @map("created_at")
+
+  @@index([accountId, createdAt])
+  @@map("loyalty_transactions")
+}
+
+model Reward {
+  id             String   @id @default(uuid()) @db.Uuid
+  name           String   @db.VarChar(100)
+  description    String?
+  pointsRequired Int      @map("points_required")
+  rewardType     String   @map("reward_type") @db.VarChar(50)
+  value          String?
+  isActive       Boolean  @default(true) @map("is_active")
+  metadata       Json     @default("{}")
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @default(now()) @map("updated_at")
+  redemptions    RewardRedemption[]
+
+  @@map("rewards")
+}
+
+model RewardRedemption {
+  id          String                  @id @default(uuid()) @db.Uuid
+  rewardId    String                  @db.Uuid @map("reward_id")
+  reward      Reward                  @relation(fields: [rewardId], references: [id])
+  customerId  String                  @db.Uuid @map("customer_id")
+  customer    Customer                @relation(fields: [customerId], references: [id])
+  accountId   String?                 @db.Uuid @map("account_id")
+  account     LoyaltyAccount?         @relation(fields: [accountId], references: [id])
+  pointsSpent Int                     @map("points_spent")
+  status      RewardRedemptionStatus  @default(PENDING)
+  metadata    Json                    @default("{}")
+  redeemedAt  DateTime?               @map("redeemed_at")
+  createdAt   DateTime                @default(now()) @map("created_at")
+
+  @@index([customerId, createdAt])
+  @@map("reward_redemptions")
 }

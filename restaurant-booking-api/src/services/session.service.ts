@@ -20,7 +20,7 @@ class SessionService {
 
   static async createSession(userId: string): Promise<RefreshSession> {
     const tokenId = randomUUID();
-    const ttlMs = ms(env.REFRESH_TOKEN_EXPIRE);
+    const ttlMs = Number(ms(env.REFRESH_TOKEN_EXPIRE as Parameters<typeof ms>[0]));
     const expiresAt = Date.now() + ttlMs;
     const client = RedisService.getClient();
 

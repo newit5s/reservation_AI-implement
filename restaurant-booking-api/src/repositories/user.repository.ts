@@ -1,7 +1,11 @@
 import { Prisma, User } from '@prisma/client';
 import { BaseRepository } from './base.repository';
 
-export class UserRepository extends BaseRepository<Prisma.UserUncheckedCreateInput> {
+export class UserRepository extends BaseRepository<
+  Prisma.UserUncheckedCreateInput,
+  User,
+  Prisma.UserUncheckedUpdateInput
+> {
   constructor() {
     super((client) => client.user);
   }

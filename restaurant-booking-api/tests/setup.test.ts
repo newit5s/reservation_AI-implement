@@ -11,7 +11,33 @@ jest.mock('@prisma/client', () => ({
     $connect: connectMock,
     $disconnect: disconnectMock,
     $queryRaw: queryMock
-  }))
+  })),
+  TableType: {
+    REGULAR: 'REGULAR',
+    BOOTH: 'BOOTH',
+    OUTDOOR: 'OUTDOOR',
+  },
+  UserRole: {
+    MASTER_ADMIN: 'MASTER_ADMIN',
+    BRANCH_ADMIN: 'BRANCH_ADMIN',
+    STAFF: 'STAFF',
+    CUSTOMER: 'CUSTOMER'
+  },
+  SettingValueType: {
+    STRING: 'STRING',
+    NUMBER: 'NUMBER',
+    BOOLEAN: 'BOOLEAN',
+    JSON: 'JSON'
+  },
+  TimelineEventType: {
+    BOOKING_CREATED: 'BOOKING_CREATED',
+    BOOKING_UPDATED: 'BOOKING_UPDATED',
+    BOOKING_CANCELLED: 'BOOKING_CANCELLED',
+    CHECKED_IN: 'CHECKED_IN',
+    COMPLETED: 'COMPLETED',
+    NOTE_ADDED: 'NOTE_ADDED',
+    BLACKLISTED: 'BLACKLISTED'
+  }
 }));
 
 const flushPromises = async () => new Promise<void>((resolve) => setImmediate(resolve));
@@ -34,6 +60,10 @@ beforeAll(async () => {
   process.env.JWT_SECRET = 'test-secret';
   process.env.REDIS_URL = 'redis://localhost:6379';
   process.env.FRONTEND_URL = 'http://localhost:5173';
+
+  connectMock.mockResolvedValue(undefined);
+  disconnectMock.mockResolvedValue(undefined);
+  queryMock.mockResolvedValue([{ ok: 1 }]);
 
   ({ env } = await import('../src/config/env'));
   ({ createApp } = await import('../src/config/app'));

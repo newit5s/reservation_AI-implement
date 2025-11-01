@@ -1,8 +1,16 @@
-import { Prisma } from '@prisma/client';
+import { Branch, Prisma } from '@prisma/client';
 import { BaseRepository } from './base.repository';
 import { PaginationOptions } from '../types';
 
-export class BranchRepository extends BaseRepository<Prisma.BranchUncheckedCreateInput> {
+type BranchWithRelations = Prisma.BranchGetPayload<{
+  include: { operatingHours: true; blockedSlots: true; settingsEntries: true };
+}>;
+
+export class BranchRepository extends BaseRepository<
+  Prisma.BranchUncheckedCreateInput,
+  Branch,
+  Prisma.BranchUpdateInput
+> {
   constructor() {
     super((client) => client.branch);
   }
@@ -14,7 +22,7 @@ export class BranchRepository extends BaseRepository<Prisma.BranchUncheckedCreat
     });
   }
 
-  async findWithDetails(id: string) {
+  async findWithDetails(id: string): Promise<BranchWithRelations | null> {
     return this.delegate.findUnique({
       where: { id },
       include: {
@@ -22,6 +30,6 @@ export class BranchRepository extends BaseRepository<Prisma.BranchUncheckedCreat
         blockedSlots: true,
         settingsEntries: true,
       },
-    });
+    }) as Promise<BranchWithRelations | null>;
   }
 }

@@ -13,6 +13,7 @@ import {
   updateStatusSchema,
   updateTableSchema,
 } from '../validations/table.validation';
+import { controller } from './utils';
 
 const router = Router();
 
@@ -21,36 +22,36 @@ router.use(authenticate);
 router.get(
   '/branches/:branchId/tables',
   validateRequest(branchTablesParamSchema),
-  TableController.list
+  controller(TableController.list)
 );
 router.post(
   '/branches/:branchId/tables',
   validateRequest(createTableSchema),
-  TableController.create
+  controller(TableController.create)
 );
 router.get(
   '/branches/:branchId/layout',
   validateRequest(branchTablesParamSchema),
-  TableController.layout
+  controller(TableController.layout)
 );
 router.put(
   '/branches/:branchId/layout',
   validateRequest(updateLayoutSchema),
-  TableController.updateLayout
+  controller(TableController.updateLayout)
 );
-router.put('/tables/:id', validateRequest(updateTableSchema), TableController.update);
-router.delete('/tables/:id', validateRequest(tableIdParamSchema), TableController.remove);
-router.put('/tables/:id/status', validateRequest(updateStatusSchema), TableController.updateStatus);
+router.put('/tables/:id', validateRequest(updateTableSchema), controller(TableController.update));
+router.delete('/tables/:id', validateRequest(tableIdParamSchema), controller(TableController.remove));
+router.put('/tables/:id/status', validateRequest(updateStatusSchema), controller(TableController.updateStatus));
 router.get(
   '/tables/:id/availability',
   validateRequest(tableAvailabilityQuerySchema),
-  TableController.availability
+  controller(TableController.availability)
 );
 router.post(
   '/tables/check-availability',
   validateRequest(bulkAvailabilitySchema),
-  TableController.bulkAvailability
+  controller(TableController.bulkAvailability)
 );
-router.post('/tables/combine', validateRequest(combineTablesSchema), TableController.combine);
+router.post('/tables/combine', validateRequest(combineTablesSchema), controller(TableController.combine));
 
 export { router as tableRoutes };

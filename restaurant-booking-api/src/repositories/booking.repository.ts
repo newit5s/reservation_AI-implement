@@ -1,8 +1,8 @@
-import { Prisma } from '@prisma/client';
+import { Booking, Prisma } from '@prisma/client';
 import { BaseRepository } from './base.repository';
 import { BookingModel } from '../models';
 
-export class BookingRepository extends BaseRepository<Prisma.BookingCreateInput> {
+export class BookingRepository extends BaseRepository<Prisma.BookingCreateInput, Booking> {
   constructor() {
     super((client) => client.booking);
   }

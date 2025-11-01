@@ -1,0 +1,45 @@
+npm warn Unknown env config "http-proxy". This will stop working in the next major version of npm.
+
+> restaurant-booking-api@1.0.0 test
+> jest --config jest.config.ts --runInBand --no-color --verbose
+
+2025-10-28T18:16:45.018Z [Restaurant Booking API] [32minfo[39m: Database connection established
+[0mGET /api/health [32m200[0m 11.390 ms - 98[0m
+2025-10-28T18:16:45.027Z [Restaurant Booking API] [32minfo[39m: Database connection established
+2025-10-28T18:16:45.028Z [Restaurant Booking API] [32minfo[39m: Database connection established
+2025-10-28T18:16:45.037Z [Restaurant Booking API] [31merror[39m: Unhandled failure {"stack":"Error: Unhandled failure\n    at /workspace/reservation_AI-implement/restaurant-booking-api/tests/setup.test.ts:161:13\n    at Layer.handle [as handle_request] (/workspace/reservation_AI-implement/restaurant-booking-api/node_modules/express/lib/router/layer.js:95:5)\n    at next (/workspace/reservation_AI-implement/restaurant-booking-api/node_modules/express/lib/router/route.js:149:13)\n    at Route.dispatch (/workspace/reservation_AI-implement/restaurant-booking-api/node_modules/express/lib/router/route.js:119:3)\n    at Layer.handle [as handle_request] (/workspace/reservation_AI-implement/restaurant-booking-api/node_modules/express/lib/router/layer.js:95:5)\n    at /workspace/reservation_AI-implement/restaurant-booking-api/node_modules/express/lib/router/index.js:284:15\n    at Function.process_params (/workspace/reservation_AI-implement/restaurant-booking-api/node_modules/express/lib/router/index.js:346:12)\n    at next (/workspace/reservation_AI-implement/restaurant-booking-api/node_modules/express/lib/router/index.js:280:10)\n    at expressInit (/workspace/reservation_AI-implement/restaurant-booking-api/node_modules/express/lib/middleware/init.js:40:5)\n    at Layer.handle [as handle_request] (/workspace/reservation_AI-implement/restaurant-booking-api/node_modules/express/lib/router/layer.js:95:5)\n    at trim_prefix (/workspace/reservation_AI-implement/restaurant-booking-api/node_modules/express/lib/router/index.js:328:13)\n    at /workspace/reservation_AI-implement/restaurant-booking-api/node_modules/express/lib/router/index.js:286:9\n    at Function.process_params (/workspace/reservation_AI-implement/restaurant-booking-api/node_modules/express/lib/router/index.js:346:12)\n    at next (/workspace/reservation_AI-implement/restaurant-booking-api/node_modules/express/lib/router/index.js:280:10)\n    at query (/workspace/reservation_AI-implement/restaurant-booking-api/node_modules/express/lib/middleware/query.js:45:5)\n    at Layer.handle [as handle_request] (/workspace/reservation_AI-implement/restaurant-booking-api/node_modules/express/lib/router/layer.js:95:5)\n    at trim_prefix (/workspace/reservation_AI-implement/restaurant-booking-api/node_modules/express/lib/router/index.js:328:13)\n    at /workspace/reservation_AI-implement/restaurant-booking-api/node_modules/express/lib/router/index.js:286:9\n    at Function.process_params (/workspace/reservation_AI-implement/restaurant-booking-api/node_modules/express/lib/router/index.js:346:12)\n    at next (/workspace/reservation_AI-implement/restaurant-booking-api/node_modules/express/lib/router/index.js:280:10)\n    at Function.handle (/workspace/reservation_AI-implement/restaurant-booking-api/node_modules/express/lib/router/index.js:175:3)\n    at Function.handle (/workspace/reservation_AI-implement/restaurant-booking-api/node_modules/express/lib/application.js:181:10)\n    at Server.app (/workspace/reservation_AI-implement/restaurant-booking-api/node_modules/express/lib/express.js:39:9)\n    at Server.emit (node:events:519:28)\n    at Server.emit (node:domain:489:12)\n    at parserOnIncoming (node:_http_server:1168:12)\n    at HTTPParser.parserOnHeadersComplete (node:_http_common:117:17)"}
+2025-10-28T18:16:45.040Z [Restaurant Booking API] [32minfo[39m: Database connection established
+2025-10-28T18:16:45.041Z [Restaurant Booking API] [31merror[39m: Database connection failed {"error":{}}
+PASS tests/setup.test.ts
+  Backend setup validation
+    ✓ loads environment configuration (2 ms)
+    ✓ starts the HTTP server without unhandled errors (8 ms)
+    ✓ attaches CORS and rate limit headers according to configuration (30 ms)
+    ✓ reports database connectivity status from the health service (1 ms)
+    ✓ marks the database as disconnected when queries fail (1 ms)
+    ✓ returns formatted responses from the error middleware for AppError instances (5 ms)
+    ✓ logs unexpected errors via the error middleware (5 ms)
+    ✓ logs database connection success (1 ms)
+    ✓ logs database connection failures with metadata (1 ms)
+
+2025-10-28T18:16:45.163Z [Restaurant Booking API] [32minfo[39m: Booking auto-confirmed {"bookingId":"booking-1"}
+PASS tests/phase4_5.test.ts
+  Phase 4 & 5 services
+    ✓ auto-confirms VIP bookings and schedules notifications (3 ms)
+    ✓ adds customers to waitlist when slot unavailable (1 ms)
+    ✓ blacklists customer and records timeline (1 ms)
+
+PASS tests/core.phase.test.ts
+  Phase 3 - Core table APIs
+    ✓ returns available tables for a branch request (1 ms)
+
+PASS tests/auth.phase.test.ts
+  Phase 2 - Authentication
+    ✓ issues access and refresh tokens for valid credentials (2 ms)
+    ✓ rejects invalid passwords with an AppError (1 ms)
+
+Test Suites: 4 passed, 4 total
+Tests:       15 passed, 15 total
+Snapshots:   0 total
+Time:        2.53 s, estimated 3 s
+Ran all test suites.
