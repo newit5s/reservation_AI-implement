@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto';
 import ms from 'ms';
 import { User } from '@prisma/client';
+import { SignOptions } from 'jsonwebtoken';
 import { env } from '../config/env';
 import {
   LoginPayload,
@@ -27,7 +28,7 @@ export class AuthService {
   }
 
   private buildAccessToken(user: User): { token: string; expiresIn: number } {
-    const expiresIn = ms(env.JWT_EXPIRE);
+    const expiresIn = Number(ms(env.JWT_EXPIRE as Parameters<typeof ms>[0]));
     const token = signToken(
       {
         sub: user.id,
@@ -36,14 +37,14 @@ export class AuthService {
         branchId: user.branchId,
         type: 'access',
       },
-      env.JWT_EXPIRE
+      env.JWT_EXPIRE as SignOptions['expiresIn']
     );
     return { token, expiresIn };
   }
 
   private async buildRefreshToken(user: User): Promise<{ token: string; expiresIn: number }> {
     const session = await SessionService.createSession(user.id);
-    const expiresIn = ms(env.REFRESH_TOKEN_EXPIRE);
+    const expiresIn = Number(ms(env.REFRESH_TOKEN_EXPIRE as Parameters<typeof ms>[0]));
     const token = signToken(
       {
         sub: user.id,
@@ -53,7 +54,7 @@ export class AuthService {
         type: 'refresh',
         tokenId: session.tokenId,
       },
-      env.REFRESH_TOKEN_EXPIRE
+      env.REFRESH_TOKEN_EXPIRE as SignOptions['expiresIn']
     );
     return { token, expiresIn };
   }

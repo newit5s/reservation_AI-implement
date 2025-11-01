@@ -3,6 +3,15 @@ import { TableService } from '../services/table.service';
 import { AuthenticatedRequest } from '../types/requests';
 import { timeStringToDate } from '../utils/helpers';
 import { AppError } from '../utils/app-error';
+import {
+  BulkAvailabilityBody,
+  CombineTablesBody,
+  CreateTableBody,
+  TableAvailabilityQuery,
+  UpdateLayoutBody,
+  UpdateStatusBody,
+  UpdateTableBody,
+} from '../validations/table.validation';
 
 const tableService = new TableService();
 
@@ -13,18 +22,23 @@ export class TableController {
   }
 
   static async create(
-    req: AuthenticatedRequest<{ branchId: string }>,
+    req: AuthenticatedRequest<{ branchId: string }, unknown, CreateTableBody>,
     res: Response
   ): Promise<void> {
+    const payload: CreateTableBody = req.body;
     const table = await tableService.createTable(req.user, {
-      ...req.body,
+      ...payload,
       branchId: req.params.branchId,
     });
     res.status(201).json(table);
   }
 
-  static async update(req: AuthenticatedRequest<{ id: string }>, res: Response): Promise<void> {
-    const table = await tableService.updateTable(req.user, req.params.id, req.body);
+  static async update(
+    req: AuthenticatedRequest<{ id: string }, unknown, UpdateTableBody>,
+    res: Response
+  ): Promise<void> {
+    const payload: UpdateTableBody = req.body;
+    const table = await tableService.updateTable(req.user, req.params.id, payload);
     res.json(table);
   }
 
@@ -34,24 +48,26 @@ export class TableController {
   }
 
   static async updateStatus(
-    req: AuthenticatedRequest<{ id: string }>,
+    req: AuthenticatedRequest<{ id: string }, unknown, UpdateStatusBody>,
     res: Response
   ): Promise<void> {
+    const payload: UpdateStatusBody = req.body;
     const table = await tableService.updateStatus(req.user, {
       id: req.params.id,
-      ...req.body,
+      ...payload,
     });
     res.json(table);
   }
 
   static async availability(
-    req: AuthenticatedRequest<{ id: string }>,
+    req: AuthenticatedRequest<{ id: string }, unknown, unknown, TableAvailabilityQuery>,
     res: Response
   ): Promise<void> {
+    const query: TableAvailabilityQuery = req.query;
     const result = await tableService.getAvailability(req.user, req.params.id, {
-      date: new Date(req.query.date as string),
+      date: new Date(query.date),
       time: (() => {
-        const parsed = timeStringToDate(req.query.time as string);
+        const parsed = timeStringToDate(query.time);
         if (!parsed) {
           throw new AppError('Invalid time format', 400);
         }
@@ -61,16 +77,20 @@ export class TableController {
     res.json(result);
   }
 
-  static async bulkAvailability(req: AuthenticatedRequest, res: Response): Promise<void> {
-    const time = timeStringToDate(req.body.time);
+  static async bulkAvailability(
+    req: AuthenticatedRequest<Record<string, never>, unknown, BulkAvailabilityBody>,
+    res: Response
+  ): Promise<void> {
+    const payload: BulkAvailabilityBody = req.body;
+    const time = timeStringToDate(payload.time);
     if (!time) {
       throw new AppError('Invalid time format', 400);
     }
     const result = await tableService.checkAvailability(req.user, {
-      branchId: req.body.branchId,
-      date: new Date(req.body.date),
+      branchId: payload.branchId,
+      date: new Date(payload.date),
       time,
-      partySize: req.body.partySize,
+      partySize: payload.partySize,
     });
     res.json(result);
   }
@@ -84,15 +104,20 @@ export class TableController {
   }
 
   static async updateLayout(
-    req: AuthenticatedRequest<{ branchId: string }>,
+    req: AuthenticatedRequest<{ branchId: string }, unknown, UpdateLayoutBody>,
     res: Response
   ): Promise<void> {
-    await tableService.updateLayout(req.user, req.params.branchId, req.body.layout);
+    const payload: UpdateLayoutBody = req.body;
+    await tableService.updateLayout(req.user, req.params.branchId, payload.layout);
     res.json({ message: 'Layout updated' });
   }
 
-  static async combine(req: AuthenticatedRequest, res: Response): Promise<void> {
-    const result = await tableService.combineTables(req.user, req.body.branchId, req.body.tableIds);
+  static async combine(
+    req: AuthenticatedRequest<Record<string, never>, unknown, CombineTablesBody>,
+    res: Response
+  ): Promise<void> {
+    const payload: CombineTablesBody = req.body;
+    const result = await tableService.combineTables(req.user, payload.branchId, payload.tableIds);
     res.json(result);
   }
 }

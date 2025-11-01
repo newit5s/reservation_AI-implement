@@ -12,42 +12,43 @@ import {
   updateOperatingHoursSchema,
   updateSettingsSchema,
 } from '../validations/branch.validation';
+import { controller } from './utils';
 
 const router = Router();
 
 router.use(authenticate);
 
-router.get('/', validateRequest(listBranchesSchema), BranchController.list);
-router.get('/:id', validateRequest(branchIdParamSchema), BranchController.get);
-router.post('/', validateRequest(createBranchSchema), BranchController.create);
-router.put('/:id', validateRequest(updateBranchSchema), BranchController.update);
-router.delete('/:id', validateRequest(branchIdParamSchema), BranchController.remove);
-router.get('/:id/settings', validateRequest(branchIdParamSchema), BranchController.getSettings);
-router.put('/:id/settings', validateRequest(updateSettingsSchema), BranchController.updateSettings);
+router.get('/', validateRequest(listBranchesSchema), controller(BranchController.list));
+router.get('/:id', validateRequest(branchIdParamSchema), controller(BranchController.get));
+router.post('/', validateRequest(createBranchSchema), controller(BranchController.create));
+router.put('/:id', validateRequest(updateBranchSchema), controller(BranchController.update));
+router.delete('/:id', validateRequest(branchIdParamSchema), controller(BranchController.remove));
+router.get('/:id/settings', validateRequest(branchIdParamSchema), controller(BranchController.getSettings));
+router.put('/:id/settings', validateRequest(updateSettingsSchema), controller(BranchController.updateSettings));
 router.get(
   '/:id/operating-hours',
   validateRequest(branchIdParamSchema),
-  BranchController.getOperatingHours
+  controller(BranchController.getOperatingHours)
 );
 router.put(
   '/:id/operating-hours',
   validateRequest(updateOperatingHoursSchema),
-  BranchController.updateOperatingHours
+  controller(BranchController.updateOperatingHours)
 );
 router.get(
   '/:id/blocked-slots',
   validateRequest(branchIdParamSchema),
-  BranchController.listBlockedSlots
+  controller(BranchController.listBlockedSlots)
 );
 router.post(
   '/:id/blocked-slots',
   validateRequest(createBlockedSlotSchema),
-  BranchController.createBlockedSlot
+  controller(BranchController.createBlockedSlot)
 );
 router.delete(
   '/:id/blocked-slots',
   validateRequest(deleteBlockedSlotsSchema),
-  BranchController.deleteBlockedSlots
+  controller(BranchController.deleteBlockedSlots)
 );
 
 export { router as branchRoutes };

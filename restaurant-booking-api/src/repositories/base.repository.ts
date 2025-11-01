@@ -3,41 +3,41 @@ import { DatabaseService } from '../services/database.service';
 import { PaginationOptions } from '../types';
 import { buildPaginatedResult, getPagination } from '../utils/helpers';
 
-type Delegate<TModel> = {
-  findUnique(args: Record<string, unknown>): Promise<TModel | null>;
-  findMany(args: Record<string, unknown>): Promise<TModel[]>;
-  create(args: { data: TModel }): Promise<TModel>;
-  update(args: { where: Record<string, unknown>; data: Partial<TModel> }): Promise<TModel>;
-  delete(args: { where: Record<string, unknown> }): Promise<TModel>;
-  count(args: { where?: Record<string, unknown> }): Promise<number>;
+type Delegate<TCreate, TUpdate, TEntity> = {
+  findUnique(...args: unknown[]): Promise<TEntity | null>;
+  findMany(...args: unknown[]): Promise<TEntity[]>;
+  create(...args: unknown[]): Promise<TEntity>;
+  update(...args: unknown[]): Promise<TEntity>;
+  delete(...args: unknown[]): Promise<TEntity>;
+  count(...args: unknown[]): Promise<number>;
 };
 
-export class BaseRepository<TModel> {
+export class BaseRepository<TCreate, TEntity = TCreate, TUpdate = Partial<TCreate>> {
   protected prisma: PrismaClient;
-  protected delegate: Delegate<TModel>;
+  protected delegate: Delegate<TCreate, TUpdate, TEntity>;
 
-  constructor(modelAccessor: (client: PrismaClient) => Delegate<TModel>) {
+  constructor(modelAccessor: (client: PrismaClient) => Delegate<TCreate, TUpdate, TEntity>) {
     this.prisma = DatabaseService.getClient();
     this.delegate = modelAccessor(this.prisma);
   }
 
-  async findById(id: string) {
+  async findById(id: string): Promise<TEntity | null> {
     return this.delegate.findUnique({ where: { id } });
   }
 
-  async findMany(args: Record<string, unknown> = {}) {
+  async findMany(args: Record<string, unknown> = {}): Promise<TEntity[]> {
     return this.delegate.findMany(args);
   }
 
-  async create(data: TModel) {
+  async create(data: TCreate): Promise<TEntity> {
     return this.delegate.create({ data });
   }
 
-  async update(id: string, data: Partial<TModel>) {
+  async update(id: string, data: TUpdate): Promise<TEntity> {
     return this.delegate.update({ where: { id }, data });
   }
 
-  async delete(id: string) {
+  async delete(id: string): Promise<TEntity> {
     return this.delegate.delete({ where: { id } });
   }
 

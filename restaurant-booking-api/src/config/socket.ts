@@ -45,7 +45,11 @@ export const initSocket = (server: HttpServer): void => {
     realServer.on('connection', (socket: SocketConnection) => {
       logger.info('WebSocket client connected', { socketId: socket.id });
 
-      socket.on('join-branch', (branchId: string) => {
+      socket.on('join-branch', (branchId: unknown) => {
+        if (typeof branchId !== 'string') {
+          logger.warn('Ignoring join-branch with invalid identifier', { branchId });
+          return;
+        }
         socket.join(`branch:${branchId}`);
       });
 

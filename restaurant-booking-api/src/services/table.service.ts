@@ -5,7 +5,7 @@ import { AuthUser } from '../types/auth';
 import { AppError } from '../utils/app-error';
 import { logger } from '../utils/logger';
 import { DatabaseService } from './database.service';
-import { TableModel, BookingModel } from '../models';
+import { TableModel, BranchModel } from '../models';
 import { TableEvents } from './tableEvents.service';
 
 interface AvailabilityRequest {
@@ -97,7 +97,7 @@ export class TableService {
   }
 
   async deleteTable(user: AuthUser, id: string): Promise<void> {
-    const existing = await this.tableRepository.findById(id);
+    const existing = (await this.tableRepository.findById(id)) as Table | null;
     if (!existing) {
       throw new AppError('Table not found', 404);
     }
@@ -137,7 +137,7 @@ export class TableService {
     }
     PermissionService.assertPermission(user, 'tables', 'availability', request.branchId);
     const partySize = request.partySize ?? 1;
-    const availableTables = await BookingModel.getAvailableTables(
+    const availableTables = await BranchModel.getAvailableTables(
       request.branchId,
       request.date,
       request.time,

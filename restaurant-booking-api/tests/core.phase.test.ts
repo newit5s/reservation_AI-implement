@@ -7,16 +7,19 @@ jest.mock('../src/services/permission.service', () => ({
   },
 }));
 
-jest.mock('../src/repositories/table.repository', () => ({
-  TableRepository: jest.fn().mockImplementation(() => ({
-    findByBranch: jest.fn(),
+jest.mock('../src/repositories/table.repository', () => {
+  const mockTableRepositoryInstance = {
+    findByBranch: jest.fn().mockResolvedValue([]),
     findById: jest.fn(),
     create: jest.fn(),
     update: jest.fn(),
     delete: jest.fn(),
     findMany: jest.fn(),
-  })),
-}));
+  };
+  return {
+    TableRepository: jest.fn().mockImplementation(() => mockTableRepositoryInstance),
+  };
+});
 
 jest.mock('../src/services/tableEvents.service', () => ({
   TableEvents: {
@@ -34,6 +37,15 @@ jest.mock('../src/services/database.service', () => ({
       },
       $transaction: jest.fn(),
     }),
+  },
+}));
+
+jest.mock('../src/models', () => ({
+  BranchModel: {
+    getAvailableTables: jest.fn().mockResolvedValue([]),
+  },
+  TableModel: {
+    isAvailable: jest.fn().mockResolvedValue(true),
   },
 }));
 

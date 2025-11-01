@@ -1,5 +1,5 @@
 import { addMinutes, isAfter, startOfDay } from 'date-fns';
-import { BookingStatus } from '@prisma/client';
+import { BookingStatus, Prisma, TimelineEventType } from '@prisma/client';
 import { DatabaseService } from '../services/database.service';
 
 const prisma = () => DatabaseService.getClient();
@@ -23,7 +23,7 @@ export class CustomerModel {
     if (!customer) {
       return 'REGULAR';
     }
-    return customer.successfulBookings >= 10 ? 'VIP' : 'REGULAR';
+    return customer.successfulBookings >= 5 ? 'VIP' : 'REGULAR';
   }
 
   static async checkBlacklist(customerId: string): Promise<boolean> {
@@ -52,6 +52,14 @@ export class CustomerModel {
     const successful = stats[BookingStatus.COMPLETED] ?? 0;
     const cancelled = stats[BookingStatus.CANCELLED] ?? 0;
     const noShow = stats[BookingStatus.NO_SHOW] ?? 0;
+    const total = Object.values(stats).reduce((acc, count) => acc + count, 0);
+    const tier = successful >= 5 ? 'VIP' : 'REGULAR';
+    const autoBlacklist = noShow >= 2 || cancelled >= 3;
+
+    const existing = await prisma().customer.findUnique({
+      where: { id: customerId },
+      select: { isBlacklisted: true, blacklistReason: true },
+    });
 
     await prisma().customer.update({
       where: { id: customerId },
@@ -59,8 +67,33 @@ export class CustomerModel {
         successfulBookings: successful,
         cancellations: cancelled,
         noShows: noShow,
-        totalBookings: Object.values(stats).reduce((acc, count) => acc + count, 0),
-        tier: successful >= 10 ? 'VIP' : 'REGULAR',
+        totalBookings: total,
+        tier,
+        isBlacklisted: autoBlacklist ? true : existing?.isBlacklisted ?? false,
+        blacklistReason: autoBlacklist
+          ? existing?.blacklistReason ?? 'Automatic blacklist triggered by booking history'
+          : existing?.blacklistReason ?? null,
+      },
+    });
+  }
+
+  static async recordTimeline(
+    customerId: string,
+    eventType: TimelineEventType | string,
+    description: string,
+    metadata: Prisma.InputJsonValue = {},
+    createdById?: string | null
+  ): Promise<void> {
+    const resolvedEvent =
+      typeof eventType === 'string' ? (eventType as TimelineEventType) : eventType;
+
+    await prisma().customerTimeline.create({
+      data: {
+        customerId,
+        eventType: resolvedEvent,
+        description,
+        metadata,
+        createdById: createdById ?? null,
       },
     });
   }
@@ -131,8 +164,8 @@ export class BookingModel {
   static async autoCancel(): Promise<number> {
     const now = new Date();
     const bookings = await prisma().booking.findMany({
-      where: { status: 'CONFIRMED' },
-      select: { id: true, bookingDate: true, timeSlot: true },
+      where: { status: BookingStatus.CONFIRMED },
+      select: { id: true, bookingDate: true, timeSlot: true, customerId: true },
     });
 
     const overdue = bookings.filter((booking) => {
@@ -144,11 +177,30 @@ export class BookingModel {
       return 0;
     }
 
-    const result = await prisma().booking.updateMany({
-      where: { id: { in: overdue.map((booking) => booking.id) } },
-      data: { status: 'NO_SHOW' },
-    });
-    return result.count;
+    await prisma().$transaction([
+      ...overdue.map((booking) =>
+        prisma().booking.update({
+          where: { id: booking.id },
+          data: { status: BookingStatus.NO_SHOW },
+        })
+      ),
+      prisma().bookingHistory.createMany({
+        data: overdue.map((booking) => ({
+          bookingId: booking.id,
+          action: 'AUTO_NO_SHOW',
+          oldStatus: BookingStatus.CONFIRMED,
+          newStatus: BookingStatus.NO_SHOW,
+          notes: 'Automatically marked as no-show after 15 minutes',
+        })),
+      }),
+    ]);
+
+    const customerIds = Array.from(
+      new Set(overdue.map((booking) => booking.customerId).filter((id): id is string => Boolean(id)))
+    );
+    await Promise.all(customerIds.map((customerId) => CustomerModel.updateStats(customerId)));
+
+    return overdue.length;
   }
 
   static async getUpcoming(branchId: string) {
