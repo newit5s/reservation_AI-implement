@@ -99,7 +99,7 @@ export class TableService {
   }
 
   async deleteTable(user: AuthUser, id: string): Promise<void> {
-    const existing = (await this.tableRepository.findById(id)) as Table | null;
+    const existing = await this.tableRepository.findById(id);
     if (!existing) {
       throw new AppError('Table not found', 404);
     }
