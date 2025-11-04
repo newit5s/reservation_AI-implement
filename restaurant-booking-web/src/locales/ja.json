@@ -10,7 +10,9 @@
     "home": "ホーム",
     "booking": "予約",
     "admin": "管理",
-    "login": "ログイン"
+    "login": "ログイン",
+    "openMenu": "メニューを開く",
+    "closeMenu": "メニューを閉じる"
   },
   "home": {
     "heroTitle": "現代のレストランに最適な予約管理",
@@ -22,11 +24,18 @@
     "selectDate": "日付を選択",
     "selectTime": "時間を選択",
     "partySize": "人数",
-    "specialRequests": "特別なリクエスト"
+    "specialRequests": "特別なリクエスト",
+    "submit": "予約を確定",
+    "submitting": "送信中..."
   },
   "admin": {
     "title": "支店概要",
-    "subtitle": "予約、テーブル、顧客の状況を確認しましょう。"
+    "subtitle": "予約、テーブル、顧客の状況を確認しましょう。",
+    "upcomingTitle": "今後の予約",
+    "bookingCode": "コード: {{code}}",
+    "bookingSummary": "{{date}}・{{time}}・{{guests}} 名",
+    "bookingStatus": "ステータス: {{status}}",
+    "noUpcoming": "今後の予約はありません。"
   },
   "auth": {
     "title": "おかえりなさい",
