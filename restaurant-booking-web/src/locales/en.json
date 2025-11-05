@@ -26,7 +26,33 @@
   },
   "admin": {
     "title": "Branch Overview",
-    "subtitle": "Monitor bookings, tables, and customer activity."
+    "subtitle": "Monitor bookings, tables, and customer activity.",
+    "quickStatsTitle": "Today's performance",
+    "trendsTitle": "7-day booking trends",
+    "upcomingTitle": "Upcoming bookings",
+    "upcomingEmpty": "No upcoming bookings scheduled.",
+    "upcomingError": "We couldn't load upcoming bookings. Please try again.",
+    "summaryError": "We couldn't load analytics for this branch right now.",
+    "summaryEmpty": "No booking activity recorded for the selected date.",
+    "trendsEmpty": "No historical data found for this range.",
+    "configureBranch": "Set VITE_DEFAULT_BRANCH_ID to view analytics for a branch.",
+    "guestsLabel": "{{count}} guests",
+    "stats": {
+      "totalBookings": "Total bookings",
+      "completedBookings": "Completed",
+      "cancelledBookings": "Cancelled",
+      "noShowRate": "No-show rate",
+      "upcomingArrivals": "Upcoming arrivals",
+      "occupancy": "Occupancy",
+      "capacityLabel": "{{checkedIn}} of {{capacity}} seats in use"
+    },
+    "trends": {
+      "date": "Date",
+      "total": "Bookings",
+      "completed": "Completed",
+      "cancelled": "Cancelled",
+      "noShow": "No-shows"
+    }
   },
   "auth": {
     "title": "Welcome back",

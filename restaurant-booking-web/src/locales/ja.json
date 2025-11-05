@@ -26,7 +26,33 @@
   },
   "admin": {
     "title": "支店概要",
-    "subtitle": "予約、テーブル、顧客の状況を確認しましょう。"
+    "subtitle": "予約、テーブル、顧客の状況を確認しましょう。",
+    "quickStatsTitle": "本日のパフォーマンス",
+    "trendsTitle": "直近7日間の予約推移",
+    "upcomingTitle": "まもなく来店する予約",
+    "upcomingEmpty": "予定されている予約はありません。",
+    "upcomingError": "予約情報を読み込めませんでした。再度お試しください。",
+    "summaryError": "現在この支店の分析情報を取得できません。",
+    "summaryEmpty": "選択した日の予約データはありません。",
+    "trendsEmpty": "この期間の履歴データは見つかりませんでした。",
+    "configureBranch": "支店の分析を表示するには VITE_DEFAULT_BRANCH_ID を設定してください。",
+    "guestsLabel": "{{count}} 名",
+    "stats": {
+      "totalBookings": "予約総数",
+      "completedBookings": "完了",
+      "cancelledBookings": "キャンセル",
+      "noShowRate": "ノーショー率",
+      "upcomingArrivals": "来店予定",
+      "occupancy": "稼働率",
+      "capacityLabel": "{{capacity}} 席中 {{checkedIn}} 席を使用中"
+    },
+    "trends": {
+      "date": "日付",
+      "total": "予約",
+      "completed": "完了",
+      "cancelled": "キャンセル",
+      "noShow": "ノーショー"
+    }
   },
   "auth": {
     "title": "おかえりなさい",

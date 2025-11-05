@@ -11,8 +11,10 @@ export const bookingService = {
     const { data } = await apiClient.post<ApiResponse<Booking>>('bookings', payload);
     return data.data;
   },
-  async getUpcoming(): Promise<Booking[]> {
-    const { data } = await apiClient.get<ApiResponse<Booking[]>>('bookings/upcoming');
+  async getUpcoming(branchId: string): Promise<Booking[]> {
+    const { data } = await apiClient.get<ApiResponse<Booking[]>>('bookings/upcoming', {
+      params: { branchId }
+    });
     return data.data;
   }
 };
