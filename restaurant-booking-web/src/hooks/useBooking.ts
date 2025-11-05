@@ -23,9 +23,10 @@ export const useBookings = () => {
   };
 };
 
-export const useUpcomingBookings = () => {
+export const useUpcomingBookings = (branchId: string) => {
   return useQuery<Booking[]>({
-    queryKey: ['bookings', 'upcoming'],
-    queryFn: () => bookingService.getUpcoming()
+    queryKey: ['bookings', 'upcoming', branchId],
+    queryFn: () => bookingService.getUpcoming(branchId),
+    enabled: Boolean(branchId)
   });
 };

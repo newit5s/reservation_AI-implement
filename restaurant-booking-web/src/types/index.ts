@@ -23,3 +23,24 @@ export interface ApiResponse<T> {
   data: T;
   message?: string;
 }
+
+export interface BranchSummary {
+  branchId: string;
+  date: string;
+  totalBookings: number;
+  completedBookings: number;
+  cancelledBookings: number;
+  noShowRate: number;
+  upcomingArrivals: number;
+  checkedInGuests: number;
+  totalCapacity: number;
+  occupancyRate: number;
+}
+
+export interface BranchTrendPoint {
+  date: string;
+  totalBookings: number;
+  completed: number;
+  cancelled: number;
+  noShow: number;
+}

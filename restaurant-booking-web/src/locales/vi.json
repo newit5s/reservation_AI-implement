@@ -26,7 +26,33 @@
   },
   "admin": {
     "title": "Tổng quan chi nhánh",
-    "subtitle": "Theo dõi đặt chỗ, bàn và hoạt động khách hàng."
+    "subtitle": "Theo dõi đặt chỗ, bàn và hoạt động khách hàng.",
+    "quickStatsTitle": "Hiệu suất hôm nay",
+    "trendsTitle": "Xu hướng đặt chỗ 7 ngày",
+    "upcomingTitle": "Đặt chỗ sắp đến",
+    "upcomingEmpty": "Chưa có đặt chỗ sắp diễn ra.",
+    "upcomingError": "Không thể tải danh sách đặt chỗ, vui lòng thử lại.",
+    "summaryError": "Không thể tải báo cáo cho chi nhánh này.",
+    "summaryEmpty": "Chưa có hoạt động đặt chỗ cho ngày được chọn.",
+    "trendsEmpty": "Không tìm thấy dữ liệu lịch sử trong khoảng này.",
+    "configureBranch": "Thiết lập VITE_DEFAULT_BRANCH_ID để xem dữ liệu của chi nhánh.",
+    "guestsLabel": "{{count}} khách",
+    "stats": {
+      "totalBookings": "Tổng số đặt chỗ",
+      "completedBookings": "Hoàn tất",
+      "cancelledBookings": "Hủy",
+      "noShowRate": "Tỷ lệ vắng mặt",
+      "upcomingArrivals": "Khách sắp đến",
+      "occupancy": "Tỷ lệ lấp đầy",
+      "capacityLabel": "{{checkedIn}}/{{capacity}} ghế đang được sử dụng"
+    },
+    "trends": {
+      "date": "Ngày",
+      "total": "Số đặt chỗ",
+      "completed": "Hoàn tất",
+      "cancelled": "Hủy",
+      "noShow": "Vắng mặt"
+    }
   },
   "auth": {
     "title": "Chào mừng trở lại",
