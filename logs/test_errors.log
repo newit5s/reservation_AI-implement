@@ -1,3 +1,11 @@
 [2025-11-06] Cypress run failed: Error: spawn Xvfb ENOENT - missing Xvfb dependency for headless execution.
 [2025-11-07] Replaced the Cypress entrypoint with a Node-based runner that transpiles TypeScript tests using esbuild, removing the
            Xvfb dependency. `npm run test:e2e` now executes without requiring any system-level display server.
+[2025-11-12] Full-stack regression run:
+  - Backend `npm test` (jest --runInBand) succeeded after prisma generate; observed expected Winston error logs from failure-handling test cases but suite passed 6/6.
+  - Frontend `npm run test` (custom Node runner) succeeded, bookingSchema.test.ts passed.
+  - Noted npm CLI warning about deprecated `http-proxy` env config during installs/tests; no action required currently.
+[2025-11-13] Full-system verification run:
+  - Backend `npm test` passed all 6 Jest suites after regenerating Prisma client; Winston emitted expected failure-handling logs.
+  - Frontend `npm run test` succeeded via the custom Node runner; bookingSchema test remains green.
+  - Master plan checklist in `readme/restaurant-booking-master-plan.md` still has no completed phases (all checkboxes unchecked).
