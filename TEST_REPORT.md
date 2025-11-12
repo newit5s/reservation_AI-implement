@@ -1,9 +1,9 @@
 # Test Report
 
 ## Backend (restaurant-booking-api)
-- Command: `npm test`
-- Result: ✅ All 5 Jest test suites passed (16 tests total).
-- Notable logs: Winston reported simulated errors during tests for monitoring (e.g., "Unhandled failure" and "Database connection failed"), but the suites still passed.
+- Command: `npm test --prefix restaurant-booking-api`
+- Result: ✅ All 7 Jest test suites passed (22 tests total).
+- Notable logs: Winston emits simulated operational logs during tests (e.g., "Unhandled failure" and "Database connection failed") along with a warning when the notification delegate is intentionally unavailable; these are expected for monitoring coverage.
 
 ## Frontend (restaurant-booking-web)
 - Command: `npm run test:e2e`

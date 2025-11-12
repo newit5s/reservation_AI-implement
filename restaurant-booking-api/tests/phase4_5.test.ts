@@ -1,4 +1,4 @@
-import { BookingStatus, CustomerTier } from '@prisma/client';
+import { BookingStatus, CustomerTier, NotificationRecipient, NotificationStatus, NotificationType } from '@prisma/client';
 
 const mockAssertPermission = jest.fn();
 
@@ -50,6 +50,20 @@ jest.mock('../src/repositories/customer.repository', () => {
 
 const { customerRepository: mockCustomerRepository } = jest.requireMock('../src/repositories/customer.repository');
 
+const buildNotificationRecord = (overrides?: Partial<{ id: string; recipientType: NotificationRecipient; recipientId: string | null; type: NotificationType; subject: string | null; content: string; status: NotificationStatus; sentAt: Date | null; readAt: Date | null; errorMessage: string | null; createdAt: Date }>) => ({
+  id: overrides?.id ?? `notification-${Math.random().toString(16).slice(2)}`,
+  recipientType: overrides?.recipientType ?? NotificationRecipient.USER,
+  recipientId: overrides?.recipientId ?? null,
+  type: overrides?.type ?? NotificationType.IN_APP,
+  subject: overrides?.subject ?? null,
+  content: overrides?.content ?? '',
+  status: overrides?.status ?? NotificationStatus.PENDING,
+  sentAt: overrides?.sentAt ?? null,
+  readAt: overrides?.readAt ?? null,
+  errorMessage: overrides?.errorMessage ?? null,
+  createdAt: overrides?.createdAt ?? new Date(),
+});
+
 const mockDatabaseClient = {
   booking: {
     create: jest.fn(),
@@ -62,7 +76,7 @@ const mockDatabaseClient = {
   },
   customer: {
     create: jest.fn(),
-    findUnique: jest.fn(),
+    findUnique: jest.fn().mockResolvedValue({ email: 'guest@example.com', phone: null }),
     update: jest.fn(),
   },
   customerNote: {
@@ -94,6 +108,29 @@ const mockDatabaseClient = {
   },
   rewardRedemption: {
     create: jest.fn(),
+  },
+  notification: {
+    create: jest.fn().mockImplementation(async ({ data }) =>
+      buildNotificationRecord({
+        recipientType: data.recipientType,
+        recipientId: data.recipientId ?? null,
+        type: data.type,
+        subject: data.subject ?? null,
+        content: data.content,
+      })
+    ),
+    update: jest.fn().mockImplementation(async ({ where, data }) =>
+      buildNotificationRecord({
+        id: where.id,
+        status: data.status ?? NotificationStatus.PENDING,
+        sentAt: data.sentAt ?? null,
+        errorMessage: data.errorMessage ?? null,
+      })
+    ),
+    findMany: jest.fn().mockResolvedValue([]),
+  },
+  user: {
+    findUnique: jest.fn().mockResolvedValue({ email: 'admin@example.com', phone: null }),
   },
   $transaction: jest.fn().mockResolvedValue(undefined),
 };

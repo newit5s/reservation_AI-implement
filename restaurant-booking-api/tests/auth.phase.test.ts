@@ -58,6 +58,18 @@ jest.mock('../src/services/redis.service', () => ({
   },
 }));
 
+jest.mock('../src/services/database.service', () => ({
+  DatabaseService: {
+    getClient: jest.fn(() => ({
+      notification: {
+        create: jest.fn(),
+        update: jest.fn(),
+        findMany: jest.fn(),
+      },
+    })),
+  },
+}));
+
 jest.mock('../src/services/email.service', () => ({
   EmailService: {
     sendEmail: jest.fn(),
