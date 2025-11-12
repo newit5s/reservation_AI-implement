@@ -9,6 +9,7 @@
   "navigation": {
     "home": "Home",
     "booking": "Booking",
+    "phases": "Project Phases",
     "admin": "Admin",
     "login": "Login"
   },
@@ -57,5 +58,15 @@
   "auth": {
     "title": "Welcome back",
     "subtitle": "Access the restaurant control centre"
+  },
+  "phases": {
+    "title": "Project delivery roadmap",
+    "subtitle": "Track which implementation phases are complete and what remains before launch.",
+    "progressSummary": "{completed} of {total} phases complete",
+    "status": {
+      "complete": "Complete",
+      "inProgress": "In progress",
+      "pending": "Pending"
+    }
   }
 }

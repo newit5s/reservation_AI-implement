@@ -24,6 +24,12 @@ const Header = () => {
             {t('navigation.booking')}
           </NavLink>
           <NavLink
+            to="/phases"
+            className={({ isActive }) => (isActive ? 'text-primary' : 'text-slate-600')}
+          >
+            {t('navigation.phases')}
+          </NavLink>
+          <NavLink
             to="/admin"
             className={({ isActive }) => (isActive ? 'text-primary' : 'text-slate-600')}
           >

@@ -9,6 +9,7 @@
   "navigation": {
     "home": "Trang chủ",
     "booking": "Đặt bàn",
+    "phases": "Tiến độ dự án",
     "admin": "Quản trị",
     "login": "Đăng nhập"
   },
@@ -57,5 +58,15 @@
   "auth": {
     "title": "Chào mừng trở lại",
     "subtitle": "Truy cập trung tâm điều khiển nhà hàng"
+  },
+  "phases": {
+    "title": "Lộ trình triển khai dự án",
+    "subtitle": "Theo dõi các giai đoạn đã hoàn thành và công việc còn lại trước khi ra mắt.",
+    "progressSummary": "Đã hoàn thành {completed}/{total} giai đoạn",
+    "status": {
+      "complete": "Hoàn thành",
+      "inProgress": "Đang thực hiện",
+      "pending": "Chưa bắt đầu"
+    }
   }
 }
