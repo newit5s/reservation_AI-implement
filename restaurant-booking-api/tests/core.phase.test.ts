@@ -35,6 +35,11 @@ jest.mock('../src/services/database.service', () => ({
       table: {
         update: jest.fn(),
       },
+      notification: {
+        create: jest.fn(),
+        update: jest.fn(),
+        findMany: jest.fn(),
+      },
       $transaction: jest.fn(),
     }),
   },
