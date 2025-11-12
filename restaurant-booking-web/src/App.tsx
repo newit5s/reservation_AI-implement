@@ -6,6 +6,7 @@ import Home from './pages/Home';
 import BookingPage from './pages/Booking';
 import AdminPage from './pages/Admin';
 import LoginPage from './pages/Login';
+import PhasesPage from './pages/Phases';
 
 const App = () => {
   const enableTestRoutes = import.meta.env.MODE !== 'production';
@@ -15,6 +16,7 @@ const App = () => {
       <Route element={<Layout />}>
         <Route index element={<Home />} />
         <Route path="booking" element={<BookingPage />} />
+        <Route path="phases" element={<PhasesPage />} />
         <Route element={<ProtectedRoute />}>
           <Route path="admin" element={<AdminPage />} />
         </Route>

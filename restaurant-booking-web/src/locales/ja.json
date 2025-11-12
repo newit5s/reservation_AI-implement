@@ -9,6 +9,7 @@
   "navigation": {
     "home": "ホーム",
     "booking": "予約",
+    "phases": "フェーズ状況",
     "admin": "管理",
     "login": "ログイン"
   },
@@ -57,5 +58,15 @@
   "auth": {
     "title": "おかえりなさい",
     "subtitle": "レストラン管理センターにアクセスする"
+  },
+  "phases": {
+    "title": "プロジェクト実行ロードマップ",
+    "subtitle": "リリースまでに完了済みのフェーズと残作業を確認できます。",
+    "progressSummary": "全{total}フェーズ中{completed}フェーズが完了",
+    "status": {
+      "complete": "完了",
+      "inProgress": "進行中",
+      "pending": "未着手"
+    }
   }
 }

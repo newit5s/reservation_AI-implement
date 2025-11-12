@@ -44,3 +44,13 @@ export interface BranchTrendPoint {
   cancelled: number;
   noShow: number;
 }
+
+export type PhaseStatus = 'complete' | 'in_progress' | 'pending';
+
+export interface ProjectPhase {
+  id: number;
+  title: string;
+  status: PhaseStatus;
+  description: string;
+  highlights: string[];
+}
